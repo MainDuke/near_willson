@@ -3,10 +3,10 @@ import board
 import neopixel
 
 # 핀 설정 (Jetson 보드의 사용 가능한 PWM 핀)
-pixel_pin = board.D18
+pixel_pin = board.D12
 
 # NeoPixel 스트립의 LED 개수
-num_pixels = 30
+num_pixels = 2
 
 # NeoPixel 객체 생성
 pixels = neopixel.NeoPixel(pixel_pin, num_pixels, brightness=0.2, auto_write=False, pixel_order=neopixel.RGB)
