@@ -1,36 +1,27 @@
+import Jetson.GPIO as GPIO
 import time
-from rpi_ws281x import *
 
-# LED 스트립 설정
-LED_COUNT      = 2      # LED 개수
-LED_PIN        = 12     # GPIO 핀 번호
-LED_FREQ_HZ    = 800000 # LED 신호의 주파수 (800kHz)
-LED_DMA        = 10     # DMA 채널을 사용
-LED_BRIGHTNESS = 255    # LED 밝기 (0에서 255)
-LED_INVERT     = False  # 신호 라인이 인버트되어야 할 경우 True로 설정
+# 사용할 핀 번호 설정 (BOARD 번호링 방식)
+led_pin = 12
 
-# LED 스트립 객체 생성
-strip = Adafruit_NeoPixel(LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT, LED_BRIGHTNESS)
-strip.begin()
-
-def colorWipe(strip, color, wait_ms=50):
-    """모든 LED를 순차적으로 색상 변경."""
-    for i in range(strip.numPixels()):
-        strip.setPixelColor(i, color)
-        strip.show()
-        time.sleep(wait_ms/1000.0)
+# 핀 설정
+GPIO.setmode(GPIO.BOARD)  # BOARD 핀번호링 스키마 사용
+GPIO.setup(led_pin, GPIO.OUT)  # 핀을 출력으로 설정
 
 try:
     while True:
-        # 빨간색으로 전환
-        colorWipe(strip, Color(255, 0, 0))  # Red
-        time.sleep(1)
-        # 녹색으로 전환
-        colorWipe(strip, Color(0, 255, 0))  # Green
-        time.sleep(1)
-        # 파란색으로 전환
-        colorWipe(strip, Color(0, 0, 255))  # Blue
-        time.sleep(1)
+        # LED 켜기
+        GPIO.output(led_pin, GPIO.HIGH)
+        print("LED ON")
+        time.sleep(1)  # 1초 동안 대기
+
+        # LED 끄기
+        GPIO.output(led_pin, GPIO.LOW)
+        print("LED OFF")
+        time.sleep(1)  # 1초 동안 대기
 
 except KeyboardInterrupt:
-    colorWipe(strip, Color(0,0,0), 10)
+    print("프로그램 종료")
+
+finally:
+    GPIO.cleanup()  # 사용한 GPIO 핀 초기화
