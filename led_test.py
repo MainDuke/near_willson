@@ -1,31 +1,36 @@
 import time
-import board
-import neopixel
+from rpi_ws281x import *
 
-# 핀 설정 (Jetson 보드의 사용 가능한 PWM 핀)
-pixel_pin = board.D12
+# LED 스트립 설정
+LED_COUNT      = 2      # LED 개수
+LED_PIN        = 12     # GPIO 핀 번호
+LED_FREQ_HZ    = 800000 # LED 신호의 주파수 (800kHz)
+LED_DMA        = 10     # DMA 채널을 사용
+LED_BRIGHTNESS = 255    # LED 밝기 (0에서 255)
+LED_INVERT     = False  # 신호 라인이 인버트되어야 할 경우 True로 설정
 
-# NeoPixel 스트립의 LED 개수
-num_pixels = 2
+# LED 스트립 객체 생성
+strip = Adafruit_NeoPixel(LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT, LED_BRIGHTNESS)
+strip.begin()
 
-# NeoPixel 객체 생성
-pixels = neopixel.NeoPixel(pixel_pin, num_pixels, brightness=0.2, auto_write=False, pixel_order=neopixel.RGB)
-
-def colorWipe(color, wait):
-    for i in range(num_pixels):
-        pixels[i] = color
-        pixels.show()
-        time.sleep(wait)
+def colorWipe(strip, color, wait_ms=50):
+    """모든 LED를 순차적으로 색상 변경."""
+    for i in range(strip.numPixels()):
+        strip.setPixelColor(i, color)
+        strip.show()
+        time.sleep(wait_ms/1000.0)
 
 try:
     while True:
         # 빨간색으로 전환
-        colorWipe((255, 0, 0), 0.1)  # Red
+        colorWipe(strip, Color(255, 0, 0))  # Red
+        time.sleep(1)
         # 녹색으로 전환
-        colorWipe((0, 255, 0), 0.1)  # Green
+        colorWipe(strip, Color(0, 255, 0))  # Green
+        time.sleep(1)
         # 파란색으로 전환
-        colorWipe((0, 0, 255), 0.1)  # Blue
+        colorWipe(strip, Color(0, 0, 255))  # Blue
+        time.sleep(1)
 
 except KeyboardInterrupt:
-    pixels.fill((0, 0, 0))
-    pixels.show()
+    colorWipe(strip, Color(0,0,0), 10)
